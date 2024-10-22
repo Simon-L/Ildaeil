@@ -55,6 +55,8 @@ namespace ildaeil {
 
 // #define WASM_TESTING
 
+extern std::string pluginFilenameArg;
+
 START_NAMESPACE_DISTRHO
 
 using namespace CARLA_BACKEND_NAMESPACE;
@@ -285,6 +287,13 @@ public:
             fIdleState = kIdleInitPluginAlreadyLoaded;
 
         fPlugin->fUI = this;
+        
+        if (!pluginFilenameArg.empty()) {
+            fPluginFilename = pluginFilenameArg.c_str();
+            loadFileAsPlugin(handle, fPluginFilename.buffer());
+            hidePluginUI(handle);
+            createOrUpdatePluginGenericUI(handle);
+        }
 
 #ifdef WASM_TESTING
         if (carla_add_plugin(handle, BINARY_NATIVE, PLUGIN_INTERNAL, nullptr, nullptr,
